@@ -2,8 +2,7 @@
 
 ```markdown
 This Odoo module provides a comprehensive membership management system for **KODE Sports Club**, handling member registration, branch assignments, blacklist workflows, revision requests, and detailed reporting.
-
----
+```
 
 ## 📦 Module Features
 
@@ -46,41 +45,42 @@ This Odoo module provides a comprehensive membership management system for **KOD
 
 ## 🗂️ Module Structure
 
+```js
 kode_membership/
 │
 ├── models/
-│ ├── kode_member.py
-│ ├── kode_branch.py
-│ ├── blacklist_history.py
-│ ├── blacklist_revision_request.py
-│ ├── blacklist_wizard.py
-│ ├── revision_request_wizard.py
+│   ├── kode_member.py
+│   ├── kode_branch.py
+│   ├── blacklist_history.py
+│   ├── blacklist_revision_request.py
+│   ├── blacklist_wizard.py
+│   ├── revision_request_wizard.py
 │
 ├── wizards/
-│ ├── blacklist_wizard_view.xml
-│ ├── revision_request_wizard_view.xml
+│   ├── blacklist_wizard_view.xml
+│   ├── revision_request_wizard_view.xml
 │
 ├── reports/
-│ ├── xlsx_member_report.py
-│ ├── member_report.xml
+│   ├── xlsx_member_report.py
+│   ├── member_report.xml
 │
 ├── security/
-│ ├── groups.xml
-│ ├── rules.xml
-│ ├── ir.model.access.csv
+│   ├── groups.xml
+│   ├── rules.xml
+│   ├── ir.model.access.csv
 │
 ├── data/
-│ ├── ir_sequence_data.xml
+│   ├── ir_sequence_data.xml
 │
 ├── views/
-│ ├── menus.xml
-│ ├── kode_member_views.xml
-│ ├── kode_branch_views.xml
-│ ├── res_partner_view.xml
-│ ├── blacklist_history_view.xml
-│ ├── blacklist_revision_request_view.xml
+│   ├── menus.xml
+│   ├── kode_member_views.xml
+│   ├── kode_branch_views.xml
+│   ├── res_partner_view.xml
+│   ├── blacklist_history_view.xml
+│   ├── blacklist_revision_request_view.xml
 │
-└── README.md ← You are here!
+└── README.md  ← You are here!
 ```
 
 ---
