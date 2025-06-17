@@ -1,67 +1,86 @@
+# 🏋️‍♂️ KODE Sports Club Membership - Odoo Module
 
 ```markdown
-# 🏋️‍♂️ KODE Membership Management - Odoo Module
-
-This module provides a complete membership management system for **KODE Sports Club**, supporting the lifecycle of member registration, blacklisting, revision requests, and reporting.
+This Odoo module provides a comprehensive membership management system for **KODE Sports Club**, handling member registration, branch assignments, blacklist workflows, revision requests, and detailed reporting.
 
 ---
 
 ## 📦 Module Features
 
 ### ✅ Member Management
-- Manage member details including names, images, partner links, and branches.
-- Status tracking: `draft`, `approved`, `black_list`.
 
-### 🛡️ Access Control
-- **Manager Group**: Full access to members and revision workflows.
-- **User Group**: Limited access to approved and blacklisted members only.
+- Manage member profiles with English/Arabic names, images, and branch assignments.
+- Track membership status: `Draft`, `Approved`, `Black List`.
+- Link to `res.partner` for seamless integration.
+- Compute renewal details (last order, date, total amount).
 
-### ⛔ Blacklisting Workflow
-- Blacklist members with reasons using a dedicated wizard.
-- Record stored in `kode.blacklist.history`.
+### 🏢 Branch Management
+
+- Create and manage club branches with unique names and locations.
+- Assign members to multiple branches (many-to-many).
+- Track the number of members per branch.
+
+### ⛔ Blacklist Workflow
+
+- Blacklist members with reasons via a dedicated wizard.
+- Store blacklist history in `kode.blacklist.history`.
 
 ### 🔄 Revision Request Workflow
-- Request a revision to a blacklisted member’s status via a wizard.
-- Only one pending request per blacklist entry is allowed.
-- Managers can `accept` or `deny` requests.
-- Upon acceptance, the member's status is set back to `draft`.
+
+- Request blacklist status revisions through a wizard.
+- Prevent duplicate pending requests.
+- Managers can `Accept` or `Deny` requests, with `Accepted` resetting member status to `Draft`.
+
+### 🛡️ Access Control
+
+- **Manager Group**: Full access to all members and revision workflows.
+- **User Group**: View only `Approved` or `Black List` members.
+- Managers control revision status changes.
 
 ### 📄 Reporting
-- **Excel Report**: Download detailed member reports with financials.
-- **HTML Print Report**: Elegant QWeb report including personal and branch information.
+
+- **Excel Report**: Download member details with names, status, renewal data, and currency.
+- **QWeb Report**: Printable HTML report with member info and assigned branches, styled with Bootstrap.
 
 ---
 
 ## 🗂️ Module Structure
 
-```
-
-kode\_membership/
+kode_membership/
 │
 ├── models/
-│   ├── kode\_member.py
-│   ├── blacklist\_history.py
-│   ├── blacklist\_revision\_request.py
-│   └── ...
+│ ├── kode_member.py
+│ ├── kode_branch.py
+│ ├── blacklist_history.py
+│ ├── blacklist_revision_request.py
+│ ├── blacklist_wizard.py
+│ ├── revision_request_wizard.py
 │
 ├── wizards/
-│   ├── blacklist\_wizard.py
-│   └── revision\_request\_wizard.py
+│ ├── blacklist_wizard_view.xml
+│ ├── revision_request_wizard_view.xml
 │
 ├── reports/
-│   ├── xlsx\_member\_report.py
-│   └── member\_report.xml
+│ ├── xlsx_member_report.py
+│ ├── member_report.xml
 │
 ├── security/
-│   ├── ir.model.access.csv
-│   ├── rules.xml
-│   └── groups.xml
+│ ├── groups.xml
+│ ├── rules.xml
+│ ├── ir.model.access.csv
+│
+├── data/
+│ ├── ir_sequence_data.xml
 │
 ├── views/
-│   └── \*.xml (not included here)
+│ ├── menus.xml
+│ ├── kode_member_views.xml
+│ ├── kode_branch_views.xml
+│ ├── res_partner_view.xml
+│ ├── blacklist_history_view.xml
+│ ├── blacklist_revision_request_view.xml
 │
-└── README.md  ← You are here!
-
+└── README.md ← You are here!
 ```
 
 ---
@@ -69,92 +88,95 @@ kode\_membership/
 ## 🔐 Security & Permissions
 
 ### Groups (`groups.xml`)
+
 - **Manager**: `group_membership_manager`
 - **User**: `group_membership_user`
 
 ### Record Rules (`rules.xml`)
-- Users see only `approved` or `black_list` members.
-- Managers see all members.
+
+- Users: Access only `Approved` or `Black List` members.
+- Managers: Full access to all members.
 
 ### Access Rights (`ir.model.access.csv`)
-| Model                            | Manager | User | Public |
-|----------------------------------|---------|------|--------|
-| `kode.member`                   | ✅ Full | ✅ R/W | ❌     |
-| `kode.blacklist.history`       | ✅ Full | ✅ Full | ✅     |
-| `kode.blacklist.revision.request` | ✅ Full | ✅ Full | ✅     |
-| `wizards` (both)                | ✅ Full | ✅ Full | ✅     |
+
+| Model                             | Manager | User    | Public  |
+| --------------------------------- | ------- | ------- | ------- |
+| `kode.member`                     | ✅ Full | ✅ R/W  | ❌      |
+| `kode.branch`                     | ✅ Full | ✅ Full | ✅ Full |
+| `kode.blacklist.history`          | ✅ Full | ✅ Full | ✅ Full |
+| `kode.blacklist.revision.request` | ✅ Full | ✅ Full | ✅ Full |
+| `kode.blacklist.wizard`           | ✅ Full | ✅ Full | ✅ Full |
+| `kode.revision.request.wizard`    | ✅ Full | ✅ Full | ✅ Full |
+| `res.partner`                     | ✅ Full | ✅ Full | ✅ Full |
 
 ---
 
 ## 🧠 Business Logic Highlights
 
-- Only **Managers** can change the `revision_status`.
-- When a revision is **accepted**, member status becomes `draft`.
-- Revision request duplicates are prevented (must resolve the pending one first).
-- Status transitions and user actions are tracked via `mail.thread`.
+- Unique codes generated for members, branches, blacklist entries, and revision requests using sequences.
+- Only **Managers** can update revision request statuses (`revision_status`).
+- `Accepted` revision requests reset member status to `Draft`.
+- Prevents duplicate pending revision requests per blacklist entry.
+- Tracks user actions and status changes via `mail.thread` and `mail.activity.mixin`.
 
 ---
 
 ## 📤 Excel Report (`xlsx_member_report.py`)
 
-- Route: `/member/excel/report/<member_ids>`
-- Returns an Excel file including:
-  - Names
+- **Route**: `/member/excel/report/<member_ids>`
+- Generates an Excel file with:
+  - English Full Name
+  - Arabic Full Name
+  - First Name
+  - Last Name
   - Status
-  - Last renewal date
-  - Total amount
-  - Currency
-  - Branches
+  - Last Renewal Date
+  - Total Last Renewal Order (with currency)
+- Features formatted headers, alternating row colors, and frozen panes.
 
 ### Sample Headers:
+
 ```
-
-English Full Name | Arabic Full Name | Status | Renewal Date | Total Last Order
-
+English Full Name | Arabic Full Name | First Name | Last Name | Status | Last Renewal Date | Total Last Renewal Order
 ```
 
 ---
 
 ## 🖨️ QWeb Report (`member_report.xml`)
 
-- Elegant printable report showing:
-  - Member information
-  - Renewal history
-  - Assigned branches
-  - Styled with Bootstrap layout
+- Printable HTML report including:
+  - Member details (English/Arabic names, status, renewal info).
+  - Assigned branches with names and locations.
+- Styled with Bootstrap for a modern, professional look.
 
 ---
 
 ## 🚀 Future Enhancements (Suggestions)
-- Add approval/rejection messages on revision decisions.
-- Track blacklist duration and expiry.
-- Send automated email notifications on blacklist or revision updates.
-- Add filters for reporting (e.g. by branch or renewal date).
+
+- Add email notifications for blacklist/revision updates.
+- Implement blacklist duration tracking and automatic expiry.
+- Enhance reporting with filters (e.g., by branch, status, or renewal date).
+- Add dashboard widgets for quick insights (e.g., member counts, blacklist status).
 
 ---
 
 ## 🧩 Dependencies
-- Built on **Odoo 17**
-- Uses standard `mail.thread`, `ir.model.access`, `ir.rule`, 'sale', and QWeb reporting features.
+
+- Built for **Odoo 17** (or later).
+- Requires: `base`, `mail`, `sale`.
+- Utilizes Odoo features: `mail.thread`, `ir.model.access`, `ir.rule`, QWeb, and Excel reporting.
 
 ---
 
 ## 👤 Author
-**Abdelrahman Naser**
-Front-End & Odoo Developer | Cairo, Egypt
+
+**Abdelrahman Naser**  
+Front-End & Odoo Developer | Cairo, Egypt  
+📍 [LinkedIn](https://www.linkedin.com/in/abdelrahman-naser-muhammed)  
+📂 [GitHub](https://github.com/abdonaser)
 
 ---
 
 ## 📃 License
-This module is developed for private use by **KODE Sports Club** and is not publicly licensed unless specified.
 
----
-```
-
----
-
-## 👨‍💻 Author & Maintainer
-
-**Abdelrahman Naser**  
-📍 [LinkedIn](https://www.linkedin.com/in/abdelrahman-naser-muhammed)  
-📂 [GitHub](https://github.com/abdonaser)
+This module is developed for private use by **KODE Sports Club** and is licensed under **OPL-1 (Odoo Proprietary License)**.
