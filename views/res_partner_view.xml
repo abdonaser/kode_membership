@@ -1,0 +1,21 @@
+<odoo>
+    <record id="view_res_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Insert Property right after Customer -->
+            <xpath expr="//field[@name='name'][2]" position="after">
+                <label for="arabic_name"/>
+                <field
+                    name="arabic_name"
+                    string="Arabic Name"
+                    placeholder="محمد أحمد"
+                    widget="text"
+                    class="text-break"
+                    options="{'line_breaks': False}"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>

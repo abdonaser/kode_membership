@@ -1,0 +1,111 @@
+<odoo>
+    <!-- ========== Form View ========== -->
+    <record id="view_blacklist_history_form" model="ir.ui.view">
+        <field name="name">blacklist.history.form</field>
+        <field name="model">kode.blacklist.history</field>
+        <field name="arch" type="xml">
+            <form string="Blacklist History">
+                <sheet>
+
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="blacklist_status"
+                            decoration-success="blacklist_status == 'solved'" decoration-info="blacklist_status == 'pending'"
+                            decoration-danger="blacklist_status == 'denied'"
+                            widget="badge" readonly="1"/>
+
+                        <field name="member_id"  readonly="1"/>
+                        <field name="blacklist_date" readonly="1"/>
+                        <field name="blocked_by" readonly="1"/>
+                        <field name="blacklist_reason"  readonly="1"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Revision Requests">
+                            <field name="revision_request_ids">
+                                <tree open="1">
+                                    <field name="name"/>
+                                    <field name="request_date"/>
+                                    <field name="requested_by"/>
+                                    <field name="revision_reason"/>
+                                    <field name="revision_status"
+                                        decoration-info="revision_status == 'pending'"
+                                         decoration-success="revision_status == 'accepted'"
+                                        decoration-danger="revision_status == 'denied'"
+                                          />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========== Tree View ========== -->
+    <record id="view_blacklist_history_tree" model="ir.ui.view">
+        <field name="name">blacklist.history.tree</field>
+        <field name="model">kode.blacklist.history</field>
+        <field name="arch" type="xml">
+            <tree string="Blacklist History" decoration-success="blacklist_status == 'solved'"
+                                      decoration-danger="blacklist_status == 'denied'"
+                                      decoration-muted="blacklist_status == 'pending'">
+                <field name="name"/>
+                 <field name="blacklist_status" decoration-success="blacklist_status == 'solved'" decoration-info="blacklist_status == 'pending'" decoration-danger="blacklist_status == 'denied'" widget="badge" readonly="1"/>
+                <field name="member_id"/>
+                <field name="blacklist_date"/>
+                <field name="blocked_by"/>
+                <field name="blacklist_reason"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <!-- ========== Search View ========== -->
+    <record id="view_blacklist_history_search" model="ir.ui.view">
+        <field name="name">blacklist.history.search</field>
+        <field name="model">kode.blacklist.history</field>
+        <field name="arch" type="xml">
+            <search string="Search Blacklist History">
+                <!-- Quick filters -->
+                <filter string="Pending" name="Pending" domain="[('blacklist_status', '=', 'pending')]" help="Show only pending blacklist cases"/>
+                <filter string="Denied" name="denied" domain="[('blacklist_status', '=', 'denied')]" help="Show only denied blacklist cases"/>
+
+                <filter string="Solved" name="solved" domain="[('blacklist_status', '=', 'solved')]" help="Show only solved blacklist cases"/>
+
+
+                <!-- Group by -->
+                  <group expand="1" string="Group By">
+                    <filter string="Blocked By" name="blocked_by" context="{'group_by': 'blocked_by'}"/>
+                    <filter string="Status" name="blacklist_status" context="{'group_by': 'blacklist_status'}"/>
+                </group>
+
+                <!-- Custom search fields -->
+                <field name="member_id"/>
+                <field name="blacklist_date"/>
+                <field name="blocked_by"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ========== Action ========== -->
+    <record id="action_blacklist_history" model="ir.actions.act_window">
+        <field name="name">Blacklist History</field>
+        <field name="res_model">kode.blacklist.history</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_blacklist_history_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new blacklist record
+            </p>
+        </field>
+    </record>
+
+    <!-- ========== Menu ========== -->
+
+    <menuitem id="menu_blacklist_history"
+              name="Blacklist History"
+              parent="kode_blacklist_menu"
+              action="action_blacklist_history"
+              sequence="1"/>
+</odoo>

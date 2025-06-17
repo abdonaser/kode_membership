@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+        <!-- Main module menu -->
+        <menuitem id="kode_sports_menu_root" name="KODE Sports Club" sequence="1"
+        web_icon="kode_membership,static/description/kode_icon.png"
+            />
+
+        <!--=========================== Members-->
+        <menuitem id="members_submenu_root" name="Members" parent="kode_sports_menu_root" sequence="9"/>
+
+        <!--=========================== Branches-->
+        <menuitem id="branches_submenu_root" name="Branches" parent="kode_sports_menu_root" sequence="9" />
+
+        <!--=========================== Management-->
+        <menuitem id="kode_blacklist_menu"
+          name="Blacklist Management"
+          parent="kode_sports_menu_root"
+          sequence="10"
+          groups="kode_membership.group_membership_manager"
+          />
+    </data>
+</odoo>

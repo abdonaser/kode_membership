@@ -1,0 +1,26 @@
+<odoo>
+    <!-- Celiopatra categories -->
+    <!-- main Category -->
+    <record id="kode_membership_category" model="ir.module.category">
+        <field name="name">KODE Sports Club Membership System</field>
+        <field name="description">Category for Membership management for KODE Sports Club related permissions and access rights.</field>
+        <field name="sequence">10</field>
+    </record>
+
+<!-- ====================== -->
+    <!-- Groups -->
+<!-- ====================== -->
+
+   <!-- Manager Group -->
+     <record id="group_membership_manager" model="res.groups">
+         <field name="name">Manager</field>
+         <field name="category_id" ref="kode_membership.kode_membership_category"/>
+     </record>
+
+     <!-- Regular User Group-->
+     <record id="group_membership_user" model="res.groups">
+         <field name="name">User</field>
+         <field name="category_id" ref="kode_membership.kode_membership_category"/>
+     </record>
+
+</odoo>

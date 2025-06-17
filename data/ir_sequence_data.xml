@@ -1,0 +1,37 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Blacklist History Sequence-->
+        <record id="seq_blacklist_code" model="ir.sequence">
+            <field name="name">Blacklist History</field>
+            <field name="code">kode.blacklist.history</field>
+            <field name="prefix">BLK/</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+        </record>
+
+        <!-- Blacklist Revision Request Sequence-->
+        <record id="seq_revision_request_code" model="ir.sequence">
+            <field name="name">Blacklist Revision Request</field>
+            <field name="code">kode.blacklist.revision.request</field>
+            <field name="prefix">REV/</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+        </record>
+
+        <!-- Member Sequence-->
+        <record id="seq_kode_member_code" model="ir.sequence">
+            <field name="name">KODE Sports Club Member</field>
+            <field name="code">kode.member</field>
+            <field name="prefix">MEM/</field>
+            <field name="padding">5</field>
+        </record>
+
+        <!-- Branch Sequence-->
+        <record id="seq_kode_branch_code" model="ir.sequence">
+            <field name="name">KODE Sports Club Branch</field>
+            <field name="code">kode.branch</field>
+            <field name="prefix">BR/</field>
+            <field name="padding">5</field>
+        </record>
+    </data>
+</odoo>

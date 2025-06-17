@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========== Form View ========== -->
+     <record id="kode_branch_form_view" model="ir.ui.view">
+         <field name="name">kode.branch.form</field>
+         <field name="model">kode.branch</field>
+         <field name="arch" type="xml">
+             <form string="Branch">
+                 <sheet>
+                     <group>
+                        <field name="code" readonly="1" class="form-control-plaintext fs-3 text-success"  />
+                         <field name="name" class="form-control fs-3 fw-bolder text-dark"/>
+                         <field name="location"/>
+                         <field name="count_of_members" class="fs-3 text-danger fw-bold"/>
+                     </group>
+                     <notebook>
+                        <page string="Members">
+                            <field name="member_ids">
+                                <tree
+                                    open="1"
+                                    decoration-danger="status == 'black_list'"
+                                    decoration-success="status == 'approved'"
+                                    decoration-muted="status == 'draft'">
+
+                                    <field name="image_1920" widget="image" class="doctor-avatar" options="{'preview_image': 'image_1920', 'size': [50, 50]}" />
+                                    <field name="name"/>
+                                    <field name="last_renewal_date"/>
+                                    <field name="status" decoration-success="status == 'approved'" decoration-info="status == 'draft'" decoration-danger="status == 'black_list'" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+
+
+                </sheet>
+                <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_no_one"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                </div>
+             </form>
+         </field>
+     </record>
+
+    <!-- ========== Tree View ========== -->
+    <record id="kode_branch_tree_view" model="ir.ui.view">
+         <field name="name">kode.branch.tree</field>
+         <field name="model">kode.branch</field>
+         <field name="arch" type="xml">
+             <tree string="Branches">
+                <field name="code" readonly="1"/>
+                <field name="name"/>
+                <field name="location"/>
+                <field name="count_of_members" class="fs-3 text-danger fw-bold"/>
+             </tree>
+         </field>
+     </record>
+
+
+    <record id="kode_branch_kanban_view" model="ir.ui.view">
+        <field name="name">kode.branch.kanban</field>
+        <field name="model">kode.branch</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_view">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="location"/>
+                <field name="count_of_members"/>
+                <field name="active"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <!-- Ribbon for Status -->
+                            <div class="ribbon ribbon-top-right" invisible="active">
+                                <span class="text-bg-danger">Archived</span>
+                            </div>
+
+                            <div class="oe_kanban_details d-flex flex-column justify-content-between gap-1">
+                                <div class="d-flex flex-column justify-content-between gap-1">
+                                    <div class="o_kanban_record_title fs-3 text-dark">
+                                        <i class="fa fa-building me-1 text-muted"></i>
+                                        <field name="name"/>
+                                    </div>
+
+                                    <div class="fw-bold text-primary fs-4">
+                                        <field name="code"/>
+                                    </div>
+
+                                    <div class="fs-4">
+                                        <i class="fa fa-map-marker-alt me-1"></i>
+                                        <field name="location"/>
+                                    </div>
+                                </div>
+
+                                <div class="o_kanban_record_bottom d-flex align-items-center justify-content-between">
+                                    <div class="oe_kanban_bottom_left">
+                                        <div class="mt-2">
+                                            <span class="badge text-bg-primary p-2 fs-4">
+                                                <i class="fa fa-users me-1"></i>
+                                                <t t-esc="record.count_of_members.value"/> Members
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ========== Search View ========== -->
+    <record id="kode_branch_search_view" model="ir.ui.view">
+        <field name="name">kode.branch.search</field>
+        <field name="model">kode.branch</field>
+        <field name="arch" type="xml">
+            <search string="Search Branches">
+                <!-- Filters -->
+                <filter string="With Members" name="has_members" domain="[('count_of_members', '>', 0)]"/>
+                <filter string="Without Members" name="no_members" domain="[('count_of_members', '=', 0)]"/>
+                <!-- Group By -->
+                <group expand="1" string="Group By">
+                    <filter string="Location" name="group_by_location" context="{'group_by': 'location'}"/>
+                </group>
+                <!-- Searchable Fields -->
+                <field name="name"/>
+                <field name="code"/>
+                <field name="location"/>
+            </search>
+        </field>
+    </record>
+
+     <!-- ========== Action ========== -->
+     <record id="kode_branch_action" model="ir.actions.act_window">
+         <field name="name">Branches</field>
+         <field name="res_model">kode.branch</field>
+        <field name="view_mode">kanban,tree,form</field>
+         <field name="search_view_id" ref="kode_branch_search_view"/>
+         <field name="help" type="html">
+            <p class="o_view_nocontent_smile">
+                Create your first Branch now!
+            </p>
+        </field>
+     </record>
+
+     <menuitem id="kode_branch_menu" name="All Branches" action="kode_branch_action" parent="branches_submenu_root"/>
+</odoo>
+
+
+

@@ -1,0 +1,98 @@
+<odoo>
+    <!-- ========== Form View ========== -->
+    <record id="view_blacklist_revision_request_form" model="ir.ui.view">
+        <field name="name">blacklist.revision.request.form</field>
+        <field name="model">kode.blacklist.revision.request</field>
+        <field name="arch" type="xml">
+            <form string="Blacklist Revision Request">
+                <sheet>
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="blacklist_id" readonly="1" />
+                        <field name="member_id" readonly="1"/>
+                        <field name="request_date" readonly="1"/>
+                        <field name="requested_by" readonly="1"/>
+                        <field name="revision_reason"
+                            readonly="1"
+                            />
+                        <field name="revision_status" class="fs-4 fw-semibold"
+                            decoration-info="revision_status == 'pending'"
+                            decoration-success="revision_status == 'accepted'"
+                            decoration-danger="revision_status == 'denied'"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========== Tree View ========== -->
+    <record id="view_blacklist_revision_request_tree" model="ir.ui.view">
+        <field name="name">blacklist.revision.request.tree</field>
+        <field name="model">kode.blacklist.revision.request</field>
+        <field name="arch" type="xml">
+
+            <tree string="Revision Requests"
+                    decoration-info="revision_status == 'pending'"
+                    decoration-success="revision_status == 'accepted'"
+                    decoration-danger="revision_status == 'denied'">
+
+                <field name="name"/>
+                <field name="member_id"/>
+                <field name="request_date"/>
+                <field name="requested_by"/>
+                <field name="revision_status"
+                    decoration-info="revision_status == 'pending'"
+                    decoration-success="revision_status == 'accepted'"
+                    decoration-danger="revision_status == 'denied'"
+                    widget="badge"
+                    readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <!-- ========== Search View ========== -->
+    <record id="view_blacklist_revision_request_search" model="ir.ui.view">
+        <field name="name">blacklist.revision.request.search</field>
+        <field name="model">kode.blacklist.revision.request</field>
+        <field name="arch" type="xml">
+            <search string="Search Revision Requests">
+                <!-- Quick filters -->
+                <filter string="Accepted" name="accepted" domain="[('revision_status', '=', 'accepted')]" help="Show only accepted requests"/>
+                <filter string="Denied" name="denied" domain="[('revision_status', '=', 'denied')]" help="Show only denied requests"/>
+                <filter string="Pending" name="pending" domain="[('revision_status', '=', 'pending')]" help="Show only pending requests"/>
+
+                <!-- Group By -->
+                <group expand="1" string="Group By">
+                    <filter string="Status" name="revision_status" context="{'group_by': 'revision_status'}"/>
+                    <filter string="Requested By" name="requested_by" context="{'group_by': 'requested_by'}"/>
+                </group>
+
+                <!-- Manual search fields -->
+                <field name="member_id"/>
+                <field name="request_date"/>
+                <field name="requested_by"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ========== Action ========== -->
+    <record id="action_blacklist_revision_request" model="ir.actions.act_window">
+        <field name="name">Revision Requests</field>
+        <field name="res_model">kode.blacklist.revision.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_blacklist_revision_request_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new blacklist record
+            </p>
+        </field>
+    </record>
+
+    <!-- ========== Menu ========== -->
+    <menuitem id="menu_blacklist_revision_request"
+              name="Revision Requests"
+              parent="kode_blacklist_menu"
+              action="action_blacklist_revision_request"
+              sequence="2"/>
+</odoo>

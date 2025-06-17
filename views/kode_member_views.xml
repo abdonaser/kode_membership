@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========== Form View ========== -->
+    <record id="kode_member_form_view" model="ir.ui.view">
+        <field name="name">kode.member.form</field>
+        <field name="model">kode.member</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="set_to_draft"
+                            string="Set to Draft"
+                            type="object"
+                            icon="fa-undo"
+                            class="oe_highlight"
+                            help="Reset the membership status back to Draft."
+                            invisible="status == 'draft' or status == 'black_list' "
+                            groups="kode_membership.group_membership_manager"/>
+
+                    <button name="set_to_approved"
+                            string="Approve"
+                            type="object"
+                            icon="fa-check"
+                            class="btn-success"
+                            help="Approve this member."
+                            invisible="status != 'draft' or status == 'black_list' "/>
+
+                    <button
+                        name="action_open_blacklist_wizard"
+                        string="Set To Blacklist"
+                        type="object"
+                        class="btn-danger"
+                        invisible="status == 'black_list' "
+                    />
+
+                    <button
+                        name="action_open_revision_request_wizard"
+                        string="Revision Request"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="status != 'black_list' "
+                    />
+
+
+                    <field name="status"
+                           widget="statusbar"
+                           options="{'clickable': '0'}"
+                           readonly="1"
+                           nolabel="1"/>
+                </header>
+                <sheet>
+
+                    <div invisible="status != 'black_list'" class="alert alert-danger shadow-sm rounded-3 p-3">
+                        <div class="fs-4 fw-semibold mb-2">
+                            ⚠️ This member is <strong>blacklisted</strong> and cannot be edited.
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <h3>
+                                <span invisible="latest_revision_status != False" class="fst-italic text-light-emphasis">
+                                    🔍 No revision requests have been submitted yet.
+                                </span>
+
+                                <span invisible="latest_revision_status == False" class="d-block mt-2 d-flex justify-content-center align-items-center gap-2">
+                                    <span class="fw-semibold">📌 Latest revision status:</span>
+                                    <field
+                                        name="latest_revision_status"
+                                        widget="badge"
+                                        decoration-success="latest_revision_status == 'accepted'"
+                                        decoration-info="latest_revision_status == 'pending'"
+                                        decoration-danger="latest_revision_status == 'denied'"
+                                        style="font-size:2px;font-weight: bold;"
+                                        readonly="1"
+                                    />
+                                </span>
+                            </h3>
+
+                        </div>
+                    </div>
+
+
+                    <div name="button_box" class="oe_button_box">
+                            <button
+                                name="open_invoice"
+                                type="object"
+                                class="oe_stat_button oe_highlight"
+                                icon="fa-pencil-square-o"
+                            >
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="currency_id" invisible="1" field_id="currency_id_0"/>
+                                        <field name="total_last_renewal_data" widget="monetary" options="{'currency_field': 'currency_id'}" field_id="total_invoiced_0" readonly='1'/>
+                                        <!-- <field name="total_last_renewal_data" widget="monetary" /> -->
+                                    </span>
+                                    <span class="o_stat_text">Last Renewal Order</span>
+                                </div>
+                        </button>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="oe_title">
+                            <h1>
+                                <label for='code'>Member Code: </label>
+                                <field name="code"  readonly="1" class="text-capitalize"  string="Member Code: "/>
+                            </h1>
+                            <h1 class="mt-2">
+                                <field name="name" readonly="1" class="text-capitalize"/>
+                            </h1>
+
+                        </div>
+                        <div class="o_form_image_centered ">
+                            <field name="image_1920"
+                                   widget="image"
+                                   class="oe_avatar img-thumbnail"
+                                   options="{'size': [250, 250]}"
+                                   nolabel="1"/>
+                        </div>
+                    </div>
+
+                    <group string="General Info">
+
+                        <field name="partner_id"  class="form-control fs-3 text-dark" readonly="status == 'black_list' or status == 'approved' "/>
+                        <field name="arabic_name" readonly="1"/>
+                        <field name="first_name" readonly="1"/>
+                        <field name="last_name" readonly="1"/>
+                    </group>
+
+                    <group  string="Membership" class="my-2 border-top pt-2 border-black border-4">
+                        <field name="last_renewal_date" readonly="1" class="mb-3 fs-2 fw-bold "/>
+                        <field name="branch_ids" widget="many2many_tags" readonly="status == 'black_list'" />
+                    </group>
+
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_no_one"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========== Tree View ========== -->
+    <record id="kode_member_tree_view" model="ir.ui.view">
+        <field name="name">kode.member.tree</field>
+        <field name="model">kode.member</field>
+        <field name="arch" type="xml">
+            <tree string="Members" decoration-success="status == 'approved'"
+                                      decoration-danger="status == 'black_list'"
+                                      decoration-muted="status == 'draft'">
+                <header>
+                    <button
+                        name="member_xlsx_report"
+                        type="object"
+                        string="Print Excel Report"
+                        class="btn btn-primary"/>
+                </header>
+                <field name="image_1920"
+                       widget="image"
+                       class="oe_avatar"
+                       options="{'preview_image': 'image_1920', 'size': [44, 44]}"/>
+                <field name="code"  readonly="1" />
+                <field name="partner_id"/>
+                <field name="arabic_name"/>
+                <field name="first_name"/>
+                <field name="last_name"/>
+                <field name="status" decoration-success="status == 'approved'" decoration-info="status == 'draft'" decoration-danger="status == 'black_list'" widget="badge"/>
+                <field name="last_renewal_date"/>
+                <field name="branch_ids" widget="many2many_tags" optional="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="kode_member_kanban_view" model="ir.ui.view">
+        <field name="name">kode.member.kanban</field>
+        <field name="model">kode.member</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_view">
+                <!-- Necessary fields only -->
+                <field name="name"/>
+                <field name="image_1920"/>
+                <field name="status"/>
+                <field name="arabic_name"/>
+                <field name="last_renewal_date"/>
+                <field name="branch_ids"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <!-- Ribbon for Status -->
+                            <div t-if="record.status.raw_value == 'black_list'" class="ribbon ribbon-top-right">
+                                <span class="text-bg-danger">Blacklisted</span>
+                            </div>
+                            <field name="active" invisible="True"/>
+                            <div class="ribbon ribbon-top-right" invisible="active">
+                                <span class="text-bg-danger">Archived</span>
+                            </div>
+                            <div class="o_kanban_image_fill_left">
+                                <img t-att-src="kanban_image('kode.member', 'image_1920', record.id.raw_value)" class="oe_kanban_avatar"/>
+                            </div>
+
+                            <div class="oe_kanban_details d-flex flex-column justify-content-between gap-3">
+                                <div class="d-flex flex-column justify-content-between gap-1">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+
+                                    <div t-if="record.arabic_name.raw_value">
+                                        <!-- <span t-esc="record.arabic_name.value"/> -->
+                                        <field name="arabic_name" class="text-end"/>
+                                    </div>
+
+                                    <div class="o_kanban_tags_section mt-1">
+                                        <field name="branch_ids" widget="many2many_tags"/>
+                                    </div>
+                                </div>
+
+                                <div class="o_kanban_record_bottom d-flex align-items-center justify-content-between">
+
+                                    <div class="oe_kanban_bottom_left">
+                                        <div class="mt-2">
+                                        <field name="status" widget="badge" decoration-success="status == 'approved'" decoration-info="status == 'draft'" decoration-danger="status == 'black_list'"/>
+                                        </div>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <div t-if="record.last_renewal_date.raw_value">
+                                            <small>
+                                                Last Renewal:
+                                                <!-- <span t-esc="record.last_renewal_date.value"/> -->
+                                                <field name="last_renewal_date"/>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ========== Search View ========== -->
+    <record id="kode_member_search_view" model="ir.ui.view">
+        <field name="name">kode.member.search</field>
+        <field name="model">kode.member</field>
+        <field name="arch" type="xml">
+            <search string="Search Members">
+                <!-- Filters -->
+                <filter string="Approved" name="approved" domain="[('status', '=', 'approved')]" help="Approved members"/>
+                <filter string="Blacklisted" name="black_list" domain="[('status', '=', 'black_list')]" help="Blacklisted members"/>
+                <filter string="Draft" name="draft" domain="[('status', '=', 'draft')]" help="Members in draft status"/>
+
+                <!-- Group By -->
+                <group expand="1" string="Group By">
+                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                    <filter string="Branch" name="group_by_branch" context="{'group_by': 'branch_ids'}"/>
+                </group>
+
+                <!-- Searchable Fields -->
+                <field name="name"/>
+                <field name="code"/>
+                <field name="arabic_name"/>
+                <field name="partner_id"/>
+                <field name="branch_ids"/>
+            </search>
+        </field>
+    </record>
+
+
+     <!-- ========== Action ========== -->
+    <record id="kode_member_action" model="ir.actions.act_window">
+        <field name="name">Members</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">kode.member</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="kode_member_search_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smile">
+                Create your first member now!
+            </p>
+        </field>
+    </record>
+
+    <!-- ========== Menu ========== -->
+    <menuitem id="kode_member_menu"
+              name="All Members"
+              parent="members_submenu_root"
+              action="kode_member_action"/>
+</odoo>

@@ -1,0 +1,72 @@
+<odoo>
+    <record id="kode_member_report" model="ir.actions.report">
+        <field name="name">Member Report</field>
+        <field name="model">kode.member</field>
+        <field name="report_type">qweb-html</field>
+        <field name="binding_model_id" ref="model_kode_member"/>
+        <field name="binding_type">report</field>
+        <field name="report_name">kode_membership.kode_member_report_template</field>
+    </record>
+
+    <template id="kode_member_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <link rel="stylesheet" href="/web/static/lib/bootstrap/css/bootstrap.min.css"/>
+
+                    <div class="container border border-2 border-dark my-4 p-4 rounded shadow">
+                        <h2 class="text-center fw-bold mb-4">📝 Membership Details Report</h2>
+
+                        <!-- 🖼️ Member Image and General Info -->
+                        <div class="row mb-4">
+                            <!-- Member Info -->
+                            <div class="col-md-8">
+                                <h4 class="fw-bold mb-3">🏥 General Information</h4>
+                                <div class="row mb-2">
+                                    <div class="col-5 fw-bold">English Name:</div>
+                                    <div class="col-7"><t t-esc="doc.partner_id.name or 'N/A'"/></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5 fw-bold">Arabic Name:</div>
+                                    <div class="col-7"><t t-esc="doc.arabic_name or 'N/A'"/></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5 fw-bold">Membership Status:</div>
+                                    <div class="col-7"><t t-esc="doc.status or 'N/A'"/></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5 fw-bold">Last Renewal Date:</div>
+                                    <div class="col-7"><t t-esc="doc.last_renewal_date or 'N/A'"/></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5 fw-bold">Total Last Renewal Order:</div>
+                                    <div class="col-7">
+                                        <t t-esc="doc.total_last_renewal_data or 'N/A'"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 🏢 Branches Section -->
+                        <div class="mb-4">
+                            <h4 class="fw-bold mb-3">🏢 Assigned Branches</h4>
+                            <t t-if="doc.branch_ids">
+                                <ul class="list-group">
+                                    <t t-foreach="doc.branch_ids" t-as="branch">
+                                        <li class="list-group-item">
+                                            <span class="fw-bold"><t t-esc="branch.name"/></span>
+                                            — <span class="text-muted"><t t-esc="branch.location or ''"/></span>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted">No branches assigned.</p>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
